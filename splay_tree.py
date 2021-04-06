@@ -1,6 +1,10 @@
 from typing import Union
+import sys
 
 from node import *
+
+
+sys.setrecursionlimit(10 ** 6)
 
 
 def keep_parents(v: Node) -> None:
@@ -28,6 +32,8 @@ def rotate(p: Node, v: Node) -> None:
         set_parent(v.left, p)
         v.left = p
         set_parent(p, v)
+    keep_parents(v)
+    keep_parents(p)
     v.parent = g
 
 
@@ -61,7 +67,8 @@ class SplayTree:
             return self._splay(v)
 
     def find(self, key) -> Node:
-        return self._find_node(self.root, key)
+        result = self._find_node(self.root, key)
+        return result if result.key == key else None
 
     def _find_node(self, v, key) -> Union[Node, None]:
         if v is None:
@@ -71,7 +78,7 @@ class SplayTree:
         if key < v.key and v.left is not None:
             return self._find_node(v.left, key)
         if key > v.key and v.right is not None:
-            return self._find_node(v.left, key)
+            return self._find_node(v.right, key)
         return self._splay(v)
 
     def _split(self, v: Node, key: int) \
@@ -100,8 +107,8 @@ class SplayTree:
         new_root.left = parts[0]
         new_root.right = parts[1]
         keep_parents(new_root)
-        tree = new_root
-        self._recount_heights(tree)
+        self.root = new_root
+        self._recount_heights(self.root)
 
     def _merge(self, left, right):
         if right is None:

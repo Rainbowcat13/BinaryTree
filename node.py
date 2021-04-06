@@ -6,9 +6,6 @@ class Node:
         self.left = None
         self.right = None
 
-    def __eq__(self, other):
-        return self is other
-
     def __lt__(self, other):
         return self.key < other.key
 
