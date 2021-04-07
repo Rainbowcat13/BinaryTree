@@ -1,10 +1,11 @@
 from typing import Union
-import sys
 
-from node import *
+from node import Node
 
 
-sys.setrecursionlimit(10 ** 6)
+def set_parent(v1, v2):
+    if v1 is not None:
+        v1.parent = v2
 
 
 def keep_parents(v: Node) -> None:
@@ -68,6 +69,8 @@ class SplayTree:
 
     def find(self, key) -> Node:
         result = self._find_node(self.root, key)
+        self.root = result
+        self._recount_heights(self.root)
         return result if result.key == key else None
 
     def _find_node(self, v, key) -> Union[Node, None]:

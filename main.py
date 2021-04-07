@@ -1,5 +1,8 @@
 from splay_tree import SplayTree
 
+import sys
+sys.setrecursionlimit(10 ** 9)
+
 
 if __name__ == '__main__':
     tree = SplayTree()
