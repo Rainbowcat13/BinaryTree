@@ -1,12 +1,9 @@
 from splay_tree import SplayTree
 
-import sys
-sys.setrecursionlimit(10 ** 9)
-
 
 if __name__ == '__main__':
     tree = SplayTree()
-    values = list(range(1000))
+    values = list(range(-900, 900))
     for i in values:
         tree.insert(i)
     for i in values:

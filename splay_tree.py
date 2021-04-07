@@ -68,27 +68,33 @@ class SplayTree:
             return self._splay(v)
 
     def find(self, key) -> Node:
-        result = self._find_node(self.root, key)
+        result = self._find_by_key(self.root, key)
         self.root = result
         self._recount_heights(self.root)
-        return result if result.key == key else None
+        return result
 
-    def _find_node(self, v, key) -> Union[Node, None]:
+    def _find_by_key(self, v, key) -> Union[Node, None]:
         if v is None:
             return None
         if key == v.key:
             return self._splay(v)
+        elif key < v.key:
+            return self._find_by_key(v.left, key)
+        else:
+            return self._find_by_key(v.right, key)
+
+    def _find_nearest(self, v, key):
         if key < v.key and v.left is not None:
-            return self._find_node(v.left, key)
-        if key > v.key and v.right is not None:
-            return self._find_node(v.right, key)
+            return self._find_nearest(v.left, key)
+        elif key > v.key and v.right is not None:
+            return self._find_nearest(v.right, key)
         return self._splay(v)
 
     def _split(self, v: Node, key: int) \
             -> tuple[Union[Node, None], Union[Node, None]]:
         if v is None:
             return None, None
-        cur = self._find_node(v, key)
+        cur = self._find_nearest(v, key)
         if cur.key == key:
             set_parent(cur.left, None)
             set_parent(cur.right, None)
@@ -118,13 +124,15 @@ class SplayTree:
             return left
         if left is None:
             return right
-        right = self._find_node(right, left.key)
+        right = self._find_nearest(right, left.key)
         right.left = left
         left.parent = right
         return right
 
     def remove(self, key):
-        v = self._find_node(self.root, key)
+        v = self._find_by_key(self.root, key)
+        if v is None:
+            return
         set_parent(v.left, None)
         set_parent(v.right, None)
         self.root = self._merge(v.left, v.right)
