@@ -131,8 +131,9 @@ class SplayTree:
 
     def find(self, key: int) -> Node:
         result = self._find_by_key(self.root, key)
-        self.root = result
-        self._recount_heights(self.root)
+        if result is not None:
+            self.root = result
+            self._recount_heights(self.root)
         return result
 
     def clear(self):
