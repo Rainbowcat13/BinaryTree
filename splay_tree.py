@@ -1,5 +1,3 @@
-from typing import Union
-
 from node import Node
 
 
@@ -42,14 +40,14 @@ class SplayTree:
     def __init__(self):
         self.root = None
 
-    def _recount_heights(self, v: Node) -> int:
+    def _recount_heights(self, v):
         if v is None:
             return 0
         v.height = max(self._recount_heights(v.left),
                        self._recount_heights(v.right)) + 1
         return v.height
 
-    def _splay(self, v: Node) -> Node:
+    def _splay(self, v):
         if v.parent is None:
             return v
         p = v.parent
@@ -67,13 +65,7 @@ class SplayTree:
                 rotate(g, v)
             return self._splay(v)
 
-    def find(self, key) -> Node:
-        result = self._find_by_key(self.root, key)
-        self.root = result
-        self._recount_heights(self.root)
-        return result
-
-    def _find_by_key(self, v, key) -> Union[Node, None]:
+    def _find_by_key(self, v, key):
         if v is None:
             return None
         if key == v.key:
@@ -90,8 +82,7 @@ class SplayTree:
             return self._find_nearest(v.right, key)
         return self._splay(v)
 
-    def _split(self, v: Node, key: int) \
-            -> tuple[Union[Node, None], Union[Node, None]]:
+    def _split(self, v, key):
         if v is None:
             return None, None
         cur = self._find_nearest(v, key)
@@ -110,15 +101,6 @@ class SplayTree:
             set_parent(left, None)
             return left, cur
 
-    def insert(self, key):
-        parts = self._split(self.root, key)
-        new_root = Node(key)
-        new_root.left = parts[0]
-        new_root.right = parts[1]
-        keep_parents(new_root)
-        self.root = new_root
-        self._recount_heights(self.root)
-
     def _merge(self, left, right):
         if right is None:
             return left
@@ -129,7 +111,16 @@ class SplayTree:
         left.parent = right
         return right
 
-    def remove(self, key):
+    def insert(self, key: int) -> None:
+        parts = self._split(self.root, key)
+        new_root = Node(key)
+        new_root.left = parts[0]
+        new_root.right = parts[1]
+        keep_parents(new_root)
+        self.root = new_root
+        self._recount_heights(self.root)
+
+    def remove(self, key: int) -> None:
         v = self._find_by_key(self.root, key)
         if v is None:
             return
@@ -137,6 +128,12 @@ class SplayTree:
         set_parent(v.right, None)
         self.root = self._merge(v.left, v.right)
         self._recount_heights(self.root)
+
+    def find(self, key: int) -> Node:
+        result = self._find_by_key(self.root, key)
+        self.root = result
+        self._recount_heights(self.root)
+        return result
 
     def clear(self):
         self.root = None
